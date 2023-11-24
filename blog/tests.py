@@ -24,7 +24,7 @@ class TestView(TestCase):
         self.assertEqual(Post.objects.count(), 0)
         # 2.2. main area에 '아직 게시물이 없습니다'라는 문구가 나타난다.
         main_area = soup.find('div', id='main-area')
-        self.assertIn('아직 게시물이 없습니다', main_area.text)
+        self.assertIn('아직 게시물이 없습니다.', main_area.text)
 
         # 3.1. 포스트가 2개 있다면
         # - 포스트 2개 생성
@@ -47,4 +47,4 @@ class TestView(TestCase):
         self.assertIn(post_001.title, main_area.text)
         self.assertIn(post_002.title, main_area.text)
         # 3.4. '아직 게시물이 없습니다'라는 문구는 더 이상 나타나지 않는다.
-        self.assertNotIn('아직 게시물이 없습니다', main_area.text)
+        self.assertNotIn('아직 게시물이 없습니다.', main_area.text)

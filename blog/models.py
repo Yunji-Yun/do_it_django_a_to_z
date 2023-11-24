@@ -1,9 +1,35 @@
 from django.db import models
+from django.contrib.auth.models import User
+import os
+
+class Tag(models.Model):
+    name = models.CharField(max_length=50)
+    slug = models.SlugField(max_length=200, unique=True, allow_unicode=True)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return f'/blog/tag/{self.slug}/'
+
+class Category(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    slug = models.SlugField(max_length=200, unique=True, allow_unicode=True)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return f'/blog/category/{self.slug}'
 
 # Create your models here.
 class Post(models.Model):
     # DB col을 생성하는데, model -> title
     title = models.CharField(max_length=30)
+
+    # 필수 아님
+    # hook_text = models.CharField
+
 
     # DB col을 생성하는데, model -> content
     content = models.TextField()
@@ -16,10 +42,18 @@ class Post(models.Model):
 
     # 수정시간을 업데이트 했을때, 현재시각으로 교체
     update_at = models.DateTimeField(auto_now=True)
-    #author: 추후 작성
+    
+    # 작성자
+    author = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    
+    # 카테고리
+    category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.SET_NULL)
+
+    # 태그
+    tag = models.ManyToManyField(Tag, blank=True)
 
     def __str__(self):
-        return f'[{self.pk}]{self.title}'
+        return f'[{self.pk}]{self.title} :: {self.author}'
 
     def get_absolute_url(self):
         return f'/blog/{self.pk}'
